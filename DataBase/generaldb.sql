@@ -26,6 +26,17 @@ CREATE TABLE `users` (
   `RecordStatus` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `curriculum` (
+  `CurriculumId` int NOT NULL AUTO_INCREMENT,
+  `CurriculumCode` varchar(10) NOT NULL,
+  `CurriculumName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`curriculumId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -69,5 +80,43 @@ Elseif (  operation = 'D') Then
 END IF;
 END$$
 DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageCurriculum`(CurCode varchar(10),CurName varchar(50),CurId int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( CurName != '' || CurCode != '') THEN
+         Select * From curriculum Where (CurriculumName = CurName or CurriculumCode = CurCode) and RecordStatus = 0;
+   Elseif ( CurId != 0) Then
+          Select * From curriculum Where  CurriculumId = CurId  and RecordStatus = 0;
+	Else
+		Select * From curriculum Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.curriculum (CurriculumId,CurriculumName,CurriculumCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CurriculumId,CurriculumName,CurriculumCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From curriculum    
+    Where  CurriculumId = CurId;
+    
+    Update curriculum SET CurriculumName = CurName,CurriculumCode = CurCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where CurriculumId = CurId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.curriculum (CurriculumId,CurriculumName,CurriculumCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CurriculumId,CurriculumName,CurriculumCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From curriculum    
+    Where  CurriculumId = CurId;
+    
+	Update curriculum SET RecordStatus = 1,ModifiedUser=userID Where CurriculumId = CurId;
+END IF;
+END$$
+DELIMITER ;
+
 
 

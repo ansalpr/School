@@ -9,6 +9,16 @@ CREATE TABLE `department` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `curriculum` (
+  `CurriculumId` int NOT NULL,
+  `CurriculumCode` varchar(10) NOT NULL,
+  `CurriculumName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `users` (
   `UserId` int unsigned NOT NULL,
   `UserName` varchar(100) NOT NULL,
