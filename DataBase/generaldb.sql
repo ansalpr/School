@@ -37,6 +37,20 @@ CREATE TABLE `curriculum` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`curriculumId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `currency` (
+  `CurrencyId` int NOT NULL AUTO_INCREMENT,
+  `CurrencyCode` varchar(4) NOT NULL,
+  `CurrencyName` varchar(50) NOT NULL,
+  `BaseCurrency` varchar(4) NOT NULL,
+  `Precisions` varchar(4) NOT NULL,
+  `Stats` varchar(10) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`CurrencyId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -114,6 +128,43 @@ Elseif (  operation = 'D') Then
     Where  CurriculumId = CurId;
     
 	Update curriculum SET RecordStatus = 1,ModifiedUser=userID Where CurriculumId = CurId;
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageCurrency`(curCode varchar(4),curName varchar(50),curId int,operation varchar(1),userID int,baseCur varchar(4),curPrecision varchar(1),curStatus varchar(10))
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( curName != '' || curCode != '') THEN
+         Select * From currency Where (CurrencyName = curName or CurrencyCode = curCode) and RecordStatus = 0;
+   Elseif ( curId != 0) Then
+          Select * From currency Where  CurrencyId = curId  and RecordStatus = 0;
+	Else
+		Select * From currency Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then  
+  
+    Insert Into generalhistory.currency (CurrencyId,CurrencyName,CurrencyCode,BaseCurrency,Precisions,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CurrencyId,CurrencyName,CurrencyCode,BaseCurrency,Precisions,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From currency    
+    Where  CurrencyId = curId;
+    
+    Update currency SET CurrencyName = curName,CurrencyCode = curCode,BaseCurrency=baseCur,Precisions=curPrecision,Stats=curStatus,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where CurrencyId = curId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.currency (CurrencyId,CurrencyName,CurrencyCode,BaseCurrency,Precisions,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CurrencyId,CurrencyName,CurrencyCode,BaseCurrency,Precisions,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From currency    
+    Where  CurrencyId = curId;
+    
+	Update currency SET RecordStatus = 1,ModifiedUser=userID Where CurrencyId = curId;
 END IF;
 END$$
 DELIMITER ;

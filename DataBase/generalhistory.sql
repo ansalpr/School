@@ -19,6 +19,21 @@ CREATE TABLE `curriculum` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `currency` (
+  `CurrencyId` int NOT NULL,
+  `CurrencyCode` varchar(4) NOT NULL,
+  `CurrencyName` varchar(50) NOT NULL,
+  `BaseCurrency` varchar(4) NOT NULL,
+  `Precisions` varchar(4) NOT NULL,
+  `Stats` varchar(10) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 CREATE TABLE `users` (
   `UserId` int unsigned NOT NULL,
   `UserName` varchar(100) NOT NULL,
