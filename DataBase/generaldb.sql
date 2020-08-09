@@ -51,6 +51,18 @@ CREATE TABLE `currency` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`CurrencyId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `country` (
+  `CountryId` int NOT NULL AUTO_INCREMENT,
+  `CountryCode` varchar(10) NOT NULL,
+  `CountryName` varchar(50) NOT NULL,
+  `Nationality` varchar(50) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`CountryId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -168,6 +180,44 @@ Elseif (  operation = 'D') Then
 END IF;
 END$$
 DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageCountry`(cntCode varchar(10),cntName varchar(50),cntId int,operation varchar(1),userID int,cntNationality varchar(50))
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( cntName != '' || cntCode != '') THEN
+         Select * From country Where (CountryName = cntName or CountryCode = cntCode) and RecordStatus = 0;
+   Elseif ( cntId != 0) Then
+          Select * From country Where  CountryId = cntId  and RecordStatus = 0;
+	Else
+		Select * From country Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.country (CountryId,CountryName,CountryCode,Nationality,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CountryId,CountryName,CountryCode,Nationality,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From country    
+    Where  CountryId = cntId;
+    
+    Update country SET CountryName = cntName,CountryCode = cntCode,Nationality=cntNationality,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where CountryId = cntId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.country (CountryId,CountryName,CountryCode,Nationality,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CountryId,CountryName,CountryCode,Nationality,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From country    
+    Where  CountryId = cntId;
+    
+	Update country SET RecordStatus = 1,ModifiedUser=userID Where CountryId = cntId;
+END IF;
+END$$
+DELIMITER ;
+
 
 
 

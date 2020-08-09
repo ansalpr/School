@@ -32,7 +32,17 @@ CREATE TABLE `currency` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+CREATE TABLE `country` (
+  `CountryId` int NOT NULL ,
+  `CountryCode` varchar(10) NOT NULL,
+  `CountryName` varchar(50) NOT NULL,
+  `Nationality` varchar(50) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (
   `UserId` int unsigned NOT NULL,
