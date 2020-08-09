@@ -63,6 +63,19 @@ CREATE TABLE `country` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`CountryId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `currencyrate` (
+  `CurrencyRateId` int NOT NULL AUTO_INCREMENT,
+  `CurrencyCode` varchar(5) NOT NULL,
+  `ExchangeRate` DECIMAL(6,3) NOT NULL,
+  `BaseCurrency` varchar(5) NOT NULL,
+  `EffectDate` DATETIME NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`CurrencyRateId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -217,6 +230,43 @@ Elseif (  operation = 'D') Then
 END IF;
 END$$
 DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageCurrencyRate`(curCode varchar(10),curBaseCurrency varchar(50),curRateId int,curExchangeRate Decimal(6,3),curEffectDate DateTime, operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF (curCode != '') THEN
+         Select * From currencyrate Where (CurrencyCode = curCode) and RecordStatus = 0;
+   Elseif ( curRateId != 0) Then
+          Select * From currencyrate Where  CurrencyRateId = curRateId  and RecordStatus = 0;
+	Else
+		Select * From currencyrate Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.currencyrate (CurrencyRateId,CurrencyCode,ExchangeRate,BaseCurrency,EffectDate,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CurrencyRateId,CurrencyCode,ExchangeRate,BaseCurrency,EffectDate,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From currencyrate    
+    Where  CurrencyRateId = curRateId;
+    
+    Update currencyrate SET CurrencyCode = curCode,ExchangeRate = curExchangeRate,BaseCurrency=curBaseCurrency,EffectDate=curEffectDate,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where CurrencyRateId = curRateId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.currencyrate (CurrencyRateId,CurrencyCode,ExchangeRate,BaseCurrency,EffectDate,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select CurrencyRateId,CurrencyCode,ExchangeRate,BaseCurrency,EffectDate,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From currencyrate    
+    Where  CurrencyRateId = curRateId;
+    
+	Update currencyrate SET RecordStatus = 1,ModifiedUser=userID Where CurrencyRateId = curRateId;
+END IF;
+END$$
+DELIMITER ;
+
 
 
 

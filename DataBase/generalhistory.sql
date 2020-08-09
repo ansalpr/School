@@ -59,3 +59,16 @@ CREATE TABLE `users` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `currencyrate` (
+  `CurrencyRateId` int NOT NULL,
+  `CurrencyCode` varchar(5) NOT NULL,
+  `ExchangeRate` DECIMAL(6,3) NOT NULL,
+  `BaseCurrency` varchar(5) NOT NULL,
+  `EffectDate` DATETIME NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
