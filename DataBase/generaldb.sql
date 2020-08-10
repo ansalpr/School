@@ -76,6 +76,18 @@ CREATE TABLE `currencyrate` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`CurrencyRateId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `state` (
+  `StateId` int NOT NULL AUTO_INCREMENT,
+  `StateCode` varchar(10) NOT NULL,
+  `StateName` varchar(45) NOT NULL,
+  `CountryCode` varchar(10) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`StateId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -263,6 +275,42 @@ Elseif (  operation = 'D') Then
     Where  CurrencyRateId = curRateId;
     
 	Update currencyrate SET RecordStatus = 1,ModifiedUser=userID Where CurrencyRateId = curRateId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageState`(statCode varchar(10),statName varchar(50),statId int,cntCode varchar(10),operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( statName != '' || statCode != '') THEN
+         Select * From state Where (StateName = statName or StateCode = statCode) and RecordStatus = 0;
+   Elseif ( statId != 0) Then
+          Select * From state Where  StateId = statId  and RecordStatus = 0;
+	Else
+		Select * From state Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.state (StateId,StateName,StateCode,CountryCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select StateId,StateName,StateCode,CountryCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From state    
+    Where  StateId = statId;
+    
+    Update state SET StateName = statName,StateCode = statCode,CountryCode=cntCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where StateId = statId;
+    
+Elseif (  operation = 'D') Then
+
+    Insert Into generalhistory.state (StateId,StateName,StateCode,CountryCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select StateId,StateName,StateCode,CountryCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From state    
+    Where  StateId = statId;
+    
+	Update state SET RecordStatus = 1,ModifiedUser=userID Where StateId = statId;
 END IF;
 END$$
 DELIMITER ;
