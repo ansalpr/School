@@ -82,4 +82,16 @@ CREATE TABLE `state` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `class` (
+  `ClassId` int NOT NULL ,
+  `ClassCode` varchar(10) NOT NULL,
+  `ClassName` varchar(45) NOT NULL,
+  `Sort` varchar(10)  NULL,
+  `CurriculumCode` varchar(10)  NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
