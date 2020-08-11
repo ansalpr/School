@@ -101,6 +101,41 @@ CREATE TABLE `class` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`ClassId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `division` (
+  `DivisionId` int NOT NULL AUTO_INCREMENT,
+  `DivisionCode` varchar(10) NOT NULL,
+  `DivisionName` varchar(45) NOT NULL,
+  `ClassCode` varchar(10)  NULL,
+  `Stats` varchar(10)  NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`DivisionId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `section` (
+  `SectionId` int NOT NULL AUTO_INCREMENT,
+  `SectionCode` varchar(10) NOT NULL,
+  `SectionName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`SectionId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `designation` (
+  `DesignationId` int NOT NULL AUTO_INCREMENT,
+  `DesignationCode` varchar(10) NOT NULL,
+  `DesignationName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`DesignationId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DELIMITER $$
@@ -325,6 +360,114 @@ Elseif (  operation = 'D') Then
     Where  StateId = statId;
     
 	Update state SET RecordStatus = 1,ModifiedUser=userID Where StateId = statId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageDivision`(divCode varchar(10),divName varchar(50),divId int,divClassCode varchar(10),divStatus varchar(10),operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( divName != '' || divCode != '') THEN
+         Select * From division Where (DivisionName = divName or DivisionCode = divCode) and RecordStatus = 0;
+   Elseif ( divId != 0) Then
+          Select * From division Where  DivisionId = divId  and RecordStatus = 0;
+	Else
+		Select * From division Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.division (DivisionId,DivisionName,DivisionCode,ClassCode,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select DivisionId,DivisionName,DivisionCode,ClassCode,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From division    
+    Where  DivisionId = divId;
+    
+    Update division SET DivisionName = divName,DivisionCode = divCode,ClassCode=divClassCode,Stats=divStatus,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where DivisionId = divId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.division (DivisionId,DivisionName,DivisionCode,ClassCode,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select DivisionId,DivisionName,DivisionCode,ClassCode,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From division    
+    Where  DivisionId = divId;
+    
+	Update division SET RecordStatus = 1,ModifiedUser=userID Where DivisionId = divId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageSection`(secCode varchar(10),secName varchar(50),secId int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( secName != '' || secCode != '') THEN
+         Select * From section Where (SectionName = secName or SectionCode = secCode) and RecordStatus = 0;
+   Elseif ( secId != 0) Then
+          Select * From section Where  SectionId = secId  and RecordStatus = 0;
+	Else
+		Select * From section Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.section (SectionId,SectionName,SectionCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select SectionId,SectionName,SectionCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From section    
+    Where  SectionId = secId;
+    
+    Update section SET SectionName = secName,SectionCode = secCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where SectionId = secId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.section (SectionId,SectionName,SectionCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select SectionId,SectionName,SectionCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From section    
+    Where  SectionId = secId;
+    
+	Update section SET RecordStatus = 1,ModifiedUser=userID Where SectionId = secId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageDesignation`(desCode varchar(10),desName varchar(50),desId int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( desName != '' || desCode != '') THEN
+         Select * From designation Where (DesignationName = desName or DesignationCode = desCode) and RecordStatus = 0;
+   Elseif ( desId != 0) Then
+          Select * From designation Where  DesignationId = desId  and RecordStatus = 0;
+	Else
+		Select * From designation Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.designation (DesignationId,DesignationName,DesignationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select DesignationId,DesignationName,DesignationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From designation    
+    Where  DesignationId = desId;
+    
+    Update designation SET DesignationName = desName,DesignationCode = desCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where DesignationId = desId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.designation (DesignationId,DesignationName,DesignationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select DesignationId,DesignationName,DesignationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From designation    
+    Where  DesignationId = desId;
+    
+	Update designation SET RecordStatus = 1,ModifiedUser=userID Where DesignationId = desId;
 END IF;
 END$$
 DELIMITER ;
