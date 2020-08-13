@@ -136,7 +136,32 @@ CREATE TABLE `designation` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`DesignationId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+CREATE TABLE `module` (
+  `ModuleId` int NOT NULL AUTO_INCREMENT,
+  `ModuleCode` varchar(10) NOT NULL,
+  `ModuleName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`ModuleId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `modulecontrol` (
+  `ModuleControlId` int NOT NULL AUTO_INCREMENT,
+  `ModuleCode` varchar(10) NOT NULL,
+  `From` DATETIME NOT NULL,
+  `TO` DATETIME NOT NULL,
+  `BackDate` int NOT NULL ,
+  `FutureDate` int NOT NULL ,
+  `Stats` int NOT NULL ,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`ModuleControlId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -471,6 +496,79 @@ Elseif (  operation = 'D') Then
 END IF;
 END$$
 DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageModule`(modCode varchar(10),modName varchar(50),modId int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( modName != '' || modCode != '') THEN
+         Select * From module Where (ModuleName = modName or ModuleCode = modCode) and RecordStatus = 0;
+   Elseif ( modId != 0) Then
+          Select * From module Where  ModuleId = modId  and RecordStatus = 0;
+	Else
+		Select * From module Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.module (ModuleId,ModuleName,ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select ModuleId,ModuleName,ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From module    
+    Where  ModuleId = modId;
+    
+    Update module SET ModuleName = modName,ModuleCode = modCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where ModuleId = modId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.module (ModuleId,ModuleName,ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select ModuleId,ModuleName,ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From module    
+    Where  ModuleId = modId;
+    
+	Update module SET RecordStatus = 1,ModifiedUser=userID Where ModuleId = modId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageModuleControl`(modCode varchar(10),modId int,modFromDate datetime,modToDate datetime,modBackDate int,modFutureDate int,modStatus int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( modCode != '' || modId != '') THEN
+         Select * From modulecontrol Where (ModuleCode = modCode or ModuleControlId = modId) and RecordStatus = 0 and Stats = 1;
+   Elseif ( modId != 0) Then
+          Select * From modulecontrol Where  ModuleId = modId  and RecordStatus = 0 and Stats = 1;
+	Else
+		Select * From modulecontrol Where RecordStatus = 0 and Stats = 1;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.modulecontrol (ModuleControlId,ModuleCode,`From`,`TO`,BackDate,FutureDate,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select ModuleControlId,ModuleCode,`From`,`TO`,BackDate,FutureDate,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From modulecontrol    
+    Where  ModuleControlId = modId;
+    
+    Update modulecontrol SET ModuleCode = modCode,`From` = modFromDate,`TO` = modToDate,BackDate = modBackDate,FutureDate = modFutureDate,Stats=modStatus,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where ModuleControlId = modId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.modulecontrol (ModuleControlId,ModuleCode,`From`,`TO`,BackDate,FutureDate,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select ModuleControlId,ModuleCode,`From`,`TO`,BackDate,FutureDate,Stats,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From modulecontrol    
+    Where  ModuleControlId = modId;
+    
+	Update modulecontrol SET RecordStatus = 1,ModifiedUser=userID Where ModuleControlId = modId;
+END IF;
+END$$
+DELIMITER ;
+
 
 
 
