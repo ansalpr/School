@@ -162,6 +162,62 @@ CREATE TABLE `modulecontrol` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`ModuleControlId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `relation` (
+  `RelationId` int NOT NULL AUTO_INCREMENT,
+  `RelationCode` varchar(10) NOT NULL,
+  `RelationName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`RelationId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `parent` (
+  `ParentId` int NOT NULL AUTO_INCREMENT ,
+  `ParentName` varchar(45) NOT NULL,
+  `DOB` datetime  NULL,
+  `POB` varchar(45) DEFAULT '' NULL,
+  `Address1` varchar(200)  DEFAULT '' NULL,
+  `Address2` varchar(200)  DEFAULT '' NULL,
+  `Country` varchar(45) DEFAULT '' NULL,
+  `MotherTongue` varchar(45) DEFAULT '' NULL,
+  `BloodGroup` varchar(2) DEFAULT '' NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`ParentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `parent` (
+  `ParentId` int NOT NULL AUTO_INCREMENT ,
+  `ParentName` varchar(45) NOT NULL,
+  `DOB` datetime  NULL,
+  `POB` varchar(45) DEFAULT '' NULL,
+  `Address1` varchar(200)  DEFAULT '' NULL,
+  `Address2` varchar(200)  DEFAULT '' NULL,
+  `Country` varchar(45) DEFAULT '' NULL,
+  `MotherTongue` varchar(45) DEFAULT '' NULL,
+  `BloodGroup` varchar(2) DEFAULT '' NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`ParentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `bloodgroup` (
+  `BloodGroupId` int NOT NULL AUTO_INCREMENT,
+  `BloodGroupCode` varchar(10) NOT NULL,
+  `BloodGroupName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`BloodGroupId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -568,6 +624,117 @@ Elseif (  operation = 'D') Then
 END IF;
 END$$
 DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageRelation`(relCode varchar(10),relName varchar(50),relId int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( relName != '' || relCode != '') THEN
+         Select * From relation Where (RelationName = relName or RelationCode = relCode) and RecordStatus = 0;
+   Elseif ( relId != 0) Then
+          Select * From relation Where  RelationId = relId  and RecordStatus = 0;
+	Else
+		Select * From relation Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.relation (RelationId,RelationName,RelationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select RelationId,RelationName,RelationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From relation    
+    Where  RelationId = relId;
+    
+    Update relation SET RelationName = relName,RelationCode = relCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where RelationId = relId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.relation (RelationId,RelationName,RelationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select RelationId,RelationName,RelationCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From relation    
+    Where  RelationId = relId;
+    
+	Update relation SET RecordStatus = 1,ModifiedUser=userID Where RelationId = relId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageParent`(parName varchar(50),parId int,parDOB datetime,parPOB varchar(45),parAddress1 varchar(200),parAddress2 varchar(200),parCountry varchar(45),
+parMotherTongue varchar(45),parBloodGroup varchar(2),operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( parName != '' ) THEN
+         Select * From parent Where (ParentName = parName ) and RecordStatus = 0;
+   Elseif ( parId != 0) Then
+          Select * From parent Where  ParentId = parId  and RecordStatus = 0;
+	Else
+		Select * From parent Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.parent (ParentId,ParentName,DOB,POB,Address1,Address2,Country,MotherTongue,BloodGroup,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select ParentId,ParentName,DOB,POB,Address1,Address2,Country,MotherTongue,BloodGroup,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From parent    
+    Where  ParentId = parId;
+    
+    Update parent SET ParentName = parName,DOB=parDOB,POB=parPOB,Address1=parAddress1,Address2=parAddress2,
+    Country=parCountry,MotherTongue=parMotherTongue,BloodGroup=parBloodGroup,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where ParentId = parId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.parent (ParentId,ParentName,DOB,POB,Address1,Address2,Country,MotherTongue,BloodGroup,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select ParentId,ParentName,DOB,POB,Address1,Address2,Country,MotherTongue,BloodGroup,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From parent    
+    Where  ParentId = parId;
+    
+	Update parent SET RecordStatus = 1,ModifiedUser=userID Where ParentId = parId;
+END IF;
+END$$
+DELIMITER ;
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manageBloodGroup`(bldCode varchar(10),bldName varchar(50),bldId int,operation varchar(1),userID int)
+BEGIN
+IF ( operation = 'S') THEN
+	IF ( bldName != '' || bldCode != '') THEN
+         Select * From bloodgroup Where (BloodGroupName = bldName or BloodGroupCode = bldCode) and RecordStatus = 0;
+   Elseif ( bldId != 0) Then
+          Select * From bloodgroup Where  BloodGroupId = bldId  and RecordStatus = 0;
+	Else
+		Select * From bloodgroup Where RecordStatus = 0;
+     END IF;
+Elseif (  operation = 'E') Then
+    
+    Insert Into generalhistory.bloodgroup (BloodGroupId,BloodGroupName,BloodGroupCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select BloodGroupId,BloodGroupName,BloodGroupCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From bloodgroup    
+    Where  BloodGroupId = bldId;
+    
+    Update bloodgroup SET BloodGroupName = bldName,BloodGroupCode = bldCode,  ModifiedUser = userID, ModifiedDate = NOW()
+    Where BloodGroupId = bldId;
+    
+Elseif (  operation = 'D') Then
+
+	Insert Into generalhistory.bloodgroup (BloodGroupId,BloodGroupName,BloodGroupCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select BloodGroupId,BloodGroupName,BloodGroupCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From bloodgroup    
+    Where  BloodGroupId = bldId;
+    
+	Update bloodgroup SET RecordStatus = 1,ModifiedUser=userID Where BloodGroupId = bldId;
+END IF;
+END$$
+DELIMITER ;
+
 
 
 

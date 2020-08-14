@@ -150,6 +150,42 @@ CREATE TABLE `modulecontrol` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `relation` (
+  `RelationId` int NOT NULL ,
+  `RelationCode` varchar(10) NOT NULL,
+  `RelationName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `parent` (
+  `ParentId` int NOT NULL ,
+  `ParentName` varchar(45) NOT NULL,
+  `DOB` datetime  NULL,
+  `POB` varchar(45) DEFAULT '' NULL,
+  `Address1` varchar(200)  DEFAULT '' NULL,
+  `Address2` varchar(200)  DEFAULT '' NULL,
+  `Country` varchar(45) DEFAULT '' NULL,
+  `MotherTongue` varchar(45) DEFAULT '' NULL,
+  `BloodGroup` varchar(2) DEFAULT '' NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `bloodgroup` (
+  `BloodGroupId` int NOT NULL ,
+  `BloodGroupCode` varchar(10) NOT NULL,
+  `BloodGroupName` varchar(45) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 
