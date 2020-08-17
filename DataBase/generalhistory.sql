@@ -186,6 +186,36 @@ CREATE TABLE `bloodgroup` (
   `ModifiedUser` int DEFAULT '0',
   `RecordStatus` int DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `student` (
+  `StudentId` int NOT NULL ,
+  `AdmissionNo` varchar(10) NOT NULL,
+  `FirstName` varchar(45) NOT NULL,
+  `MiddleName` varchar(45) DEFAULT '' NULL,
+  `LastName` varchar(45) DEFAULT '' NULL,
+  `Gender` varchar(10) NOT NULL,
+  `MotherID` int DEFAULT '0' NULL,
+  `FatherID` int DEFAULT '0' NULL,
+  `GuardianID` int DEFAULT '0' NULL,
+  `POB` varchar(45) DEFAULT '' NULL,
+  `DOB` datetime NOT NULL,
+  `Address1` varchar(200) DEFAULT '' NULL,
+  `Address2` varchar(200) DEFAULT '' NULL,
+  `State` varchar(45) DEFAULT '' NULL,
+  `CountryCode` varchar(4) DEFAULT '' NULL,
+  `MotherTongue` varchar(45) DEFAULT '' NULL,
+  `BloodGroupCode` varchar(4) DEFAULT '' NULL,
+  `Stats` varchar(10) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+
 
 
 

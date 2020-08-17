@@ -218,6 +218,34 @@ CREATE TABLE `bloodgroup` (
   `RecordStatus` int DEFAULT '0',
   PRIMARY KEY (`BloodGroupId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `student` (
+  `StudentId` int NOT NULL AUTO_INCREMENT,
+  `AdmissionNo` varchar(10) NOT NULL,
+  `FirstName` varchar(45) NOT NULL,
+  `MiddleName` varchar(45) DEFAULT '' NULL,
+  `LastName` varchar(45) DEFAULT '' NULL,
+  `Gender` varchar(10) NOT NULL,
+  `MotherID` int DEFAULT '0' NULL,
+  `FatherID` int DEFAULT '0' NULL,
+  `GuardianID` int DEFAULT '0' NULL,
+  `POB` varchar(45) DEFAULT '' NULL,
+  `DOB` datetime NOT NULL,
+  `Address1` varchar(200) DEFAULT '' NULL,
+  `Address2` varchar(200) DEFAULT '' NULL,
+  `State` varchar(45) DEFAULT '' NULL,
+  `CountryCode` varchar(4) DEFAULT '' NULL,
+  `MotherTongue` varchar(45) DEFAULT '' NULL,
+  `BloodGroupCode` varchar(4) DEFAULT '' NULL,
+  `Stats` varchar(10) NOT NULL,
+  `CreatedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatedUser` int DEFAULT '0',
+  `ModifiedDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedUser` int DEFAULT '0',
+  `RecordStatus` int DEFAULT '0',
+  PRIMARY KEY (`StudentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 
 DELIMITER $$
 CREATE  PROCEDURE `sp_AuthCheck`(uName varchar(200),pwd varchar(200))
@@ -595,7 +623,7 @@ IF ( operation = 'S') THEN
 	IF ( modCode != '' || modId != '') THEN
          Select * From modulecontrol Where (ModuleCode = modCode or ModuleControlId = modId) and RecordStatus = 0 and Stats = 1;
    Elseif ( modId != 0) Then
-          Select * From modulecontrol Where  ModuleId = modId  and RecordStatus = 0 and Stats = 1;
+          Select * From modulecontrol Where  ModuleControlId = modId  and RecordStatus = 0 and Stats = 1;
 	Else
 		Select * From modulecontrol Where RecordStatus = 0 and Stats = 1;
      END IF;
