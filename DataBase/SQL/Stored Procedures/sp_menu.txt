@@ -1,0 +1,57 @@
+USE [generaldb]
+GO
+
+/****** Object:  StoredProcedure [dbo].[sp_manageMenu]    Script Date: 04-09-2020 07:06:14 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE  PROCEDURE [dbo].[sp_manageMenu](@menCode varchar(10),@menName varchar(50),@menId int,@menPath varchar(10),@menModuleCode varchar(50),@operation varchar(1),@userID int)
+AS
+BEGIN
+IF ( @operation = 'S') 
+BEGIN
+	IF ( @menName != '' OR @menCode != '') 
+	BEGIN
+         Select * From menu Where (MenuName = @menName or MenuCode = @menCode) and RecordStatus = 0;
+	END
+	Else If ( @menId != 0) 
+	BEGIN
+          Select * From menu Where  MenuId = @menId  and RecordStatus = 0;
+	END
+	Else
+	BEGIN
+		Select * From menu Where RecordStatus = 0;
+     END 
+END
+Else If (  @operation = 'E') 
+    BEGIN
+    Insert Into generalhistory.[dbo].menu (MenuId,MenuName,MenuCode,[Path],ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select MenuId,MenuName,MenuCode,[Path],ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From menu    
+    Where  MenuId = @menId;
+    
+    Update menu SET MenuName = @menName,MenuCode = @menCode,[Path] = @menPath,ModuleCode=@menModuleCode,  ModifiedUser = @userID, ModifiedDate = GETDATE()
+    Where MenuId = @menId;
+    END
+Else If (  @operation = 'D') 
+	BEGIN
+	Insert Into generalhistory.[dbo].menu (MenuId,MenuName,MenuCode,[Path],ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+    Select MenuId,MenuName,MenuCode,[Path],ModuleCode,
+											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+    From menu    
+    Where  MenuId = @menId;
+    
+	Update menu SET RecordStatus = 1,ModifiedUser=@userID Where MenuId = @menId;
+	END 
+END
+GO
+
+
