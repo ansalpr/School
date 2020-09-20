@@ -562,3 +562,89 @@
 --	Update bloodgroup SET RecordStatus = 1,ModifiedUser=@userID Where BloodGroupId = @bldId;
 --END
 --END
+
+
+--CREATE  PROCEDURE [dbo].[sp_manageSchool](@schCode varchar(10),@schName varchar(50),@schId int,@schAddress1 varchar(1000),@schAddress2 varchar(1000),
+--				@schPhone varchar(100),@schFax varchar(50),@schEmail varchar(50),@operation varchar(1),@userID int)
+--AS
+--BEGIN
+--IF ( @operation = 'S') 
+--BEGIN
+--	IF ( @schName != '' OR @schCode != '') 
+--	BEGIN
+--         Select * From school Where (SchoolName = @schName or SchoolCode = @schCode) and RecordStatus = 0;
+--	END
+--	Else If ( @schId != 0) 
+--	BEGIN
+--          Select * From school Where  SchoolId = @schId  and RecordStatus = 0;
+--	END
+--	Else
+--	BEGIN
+--		Select * From school Where RecordStatus = 0;
+--     END 
+--END
+--Else If (  @operation = 'E') 
+--    BEGIN
+--    Insert Into generalhistory.[dbo].school ([SchoolId],[SchoolCode],[SchoolName],[SchoolAddress1],[SchoolAddress2],[Phone],[Fax],[Email],
+--											[CreatedDate] ,[CreatedUser],[ModifiedDate],[ModifiedUser],[RecordStatus])
+--    Select [SchoolId],[SchoolCode],[SchoolName],[SchoolAddress1],[SchoolAddress2],[Phone],[Fax],[Email],
+--											[CreatedDate] ,[CreatedUser],[ModifiedDate],[ModifiedUser],[RecordStatus]
+--    From school    
+--    Where  [SchoolId] = @schId;   
+	
+
+--    Update school SET[SchoolCode] = @schCode,[SchoolName] = @schName,[SchoolAddress1] = @schAddress1,[SchoolAddress2] = @schAddress2,[Phone] = @schPhone,[Fax] = @schFax,[Email] = @schEmail, ModifiedUser = @userID, ModifiedDate = GETDATE()
+--    Where [SchoolId] = @schId;
+--    END
+--Else If (  @operation = 'D') 
+--	BEGIN
+--	Insert Into generalhistory.[dbo].school ([SchoolId],[SchoolCode],[SchoolName],[SchoolAddress1],[SchoolAddress2],[Phone],[Fax],[Email],
+--											[CreatedDate] ,[CreatedUser],[ModifiedDate],[ModifiedUser],[RecordStatus])
+--    Select [SchoolId],[SchoolCode],[SchoolName],[SchoolAddress1],[SchoolAddress2],[Phone],[Fax],[Email],
+--											[CreatedDate] ,[CreatedUser],[ModifiedDate],[ModifiedUser],[RecordStatus]
+--    From school    
+--    Where  [SchoolId] = @schId; 
+    
+--	Update school SET RecordStatus = 1,ModifiedUser=@userID Where [SchoolId] = @schId;
+--	END 
+--END
+--GO
+--CREATE PROCEDURE [dbo].[sp_manageClass](@clsCode varchar(10),@clsName varchar(50),@clsId int,@clsSort varchar(10),@clsCurriculumCode varchar(10),@operation varchar(1),@userID int)
+--AS
+--BEGIN
+--IF ( @operation = 'S') BEGIN
+--	IF ( @clsName != '' OR @clsCode != '') BEGIN
+--        Select * From class Where (ClassName = @clsName or ClassCode = @clsCode) and RecordStatus = 0;
+--		 END
+--   Else If ( @clsId != 0) BEGIN
+--         Select * From class Where  ClassId = @clsId  and RecordStatus = 0; 
+--		  END
+--	Else BEGIN
+--		Select * From class Where RecordStatus = 0;
+--		END
+--END
+--Else If (  @operation = 'E') BEGIN
+    
+--    Insert Into generalhistory.class (ClassId,ClassName,ClassCode,Sort,CurriculumCode,
+--											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+--    Select ClassId,ClassName,ClassCode,Sort,CurriculumCode,
+--											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+--    From class    
+--    Where  ClassId = @clsId;
+    
+--    Update class SET ClassName = @clsName,ClassCode = @clsCode,Sort=@clsSort,CurriculumCode=@clsCurriculumCode,  ModifiedUser = @userID, ModifiedDate = GETDATE()
+--    Where ClassId = @clsId;
+--END    
+--Else If (  @operation = 'D') BEGIN
+
+--	Insert Into generalhistory.class (ClassId,ClassName,ClassCode,Sort,CurriculumCode,
+--											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus)
+--    Select ClassId,ClassName,ClassCode,Sort,CurriculumCode,
+--											CreatedDate,CreatedUser,ModifiedDate,ModifiedUser,RecordStatus
+--    From class    
+--    Where  ClassId = @clsId;
+    
+--	Update class SET RecordStatus = 1,ModifiedUser=@userID Where ClassId = @clsId;
+--END 
+--END
+--GO
